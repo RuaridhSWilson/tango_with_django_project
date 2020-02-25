@@ -85,6 +85,17 @@ def show_category(request, category_name_slug):
         context_dict["category"] = None
         context_dict["pages"] = None
 
+    result_list = []
+    if request.method == "POST":
+        query = request.POST["query"].strip()
+        if query:
+            result_list = run_query(query)
+    else:
+        query = ""
+    
+    context_dict["query"] = query
+    context_dict["result_list"] = result_list
+
     # Go render the response and return it to the client.
     return render(request, "rango/category.html", context=context_dict)
 
@@ -155,7 +166,7 @@ def restricted(request):
     return render(request, "rango/restricted.html")
 
 
-def search(request):
+""" def search(request):
     result_list = []
 
     if request.method == "POST":
@@ -165,7 +176,7 @@ def search(request):
     else:
         query = ""
     
-    return render(request, "rango/search.html", {"query": query, "result_list": result_list})
+    return render(request, "rango/search.html", {"query": query, "result_list": result_list}) """
 
 
 def goto_url(request):
