@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.views import View
 
 from rango.models import Category, Page
-from rango.forms import CategoryForm, PageForm
+from rango.forms import CategoryForm, PageForm, UserProfileForm
 from rango.bing_search import run_query
 
 from datetime import datetime
@@ -50,11 +51,14 @@ def index(request):
     return render(request, "rango/index.html", context=context_dict)
 
 
-def about(request):
-    visitor_cookie_handler(request)
-    return render(
-        request, "rango/about.html", context={"visits": request.session["visits"]}
-    )
+class AboutView(View):
+    def get(self, request):
+        context_dict = {}
+
+        visitor_cookie_handler(request)
+        context_dict["visits"] = request.session["visits"]
+
+        return render(request, "rango/about.html", context_dict)
 
 
 def show_category(request, category_name_slug):
@@ -92,7 +96,7 @@ def show_category(request, category_name_slug):
             result_list = run_query(query)
     else:
         query = ""
-    
+
     context_dict["query"] = query
     context_dict["result_list"] = result_list
 
@@ -192,3 +196,23 @@ def goto_url(request):
             return redirect(reverse("rango:index"))
     except (Page.DoesNotExist, request.DoesNotExist):
         return redirect(reverse("rango:index"))
+
+
+@login_required
+def register_profile(request):
+    form = UserProfileForm()
+
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+
+            return redirect(reverse("rango:index"))
+        else:
+            print(form.errors)
+
+    context_dict = {"form": form}
+    return render(request, "rango/profile_registration.html", context_dict)

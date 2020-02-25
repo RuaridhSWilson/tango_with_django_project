@@ -1,0 +1,25 @@
+{% extends "rango/base.html" %}
+
+{% block title_block %}
+    Register - Step 2
+{% endblock %}
+
+{% block body_block %}
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1 class="jumbotron-heading">Register Here - Step 2</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="form-group">
+                <form role="form" method="post" action="{% url 'rango:register_profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
