@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm
+from rango.bing_search import run_query
 
 from datetime import datetime
 
@@ -69,7 +70,7 @@ def show_category(request, category_name_slug):
 
         # Retrieve all of the associated pages.
         # The filter() will return a list of page objects or an empty list.
-        pages = Page.objects.filter(category=category)
+        pages = Page.objects.filter(category=category).order_by("-views")
 
         # Adds our results list to the template context under name pages.
         context_dict["pages"] = pages
@@ -152,3 +153,31 @@ def add_page(request, category_name_slug):
 @login_required
 def restricted(request):
     return render(request, "rango/restricted.html")
+
+
+def search(request):
+    result_list = []
+
+    if request.method == "POST":
+        query = request.POST["query"].strip()
+        if query:
+            result_list = run_query(query)
+    else:
+        query = ""
+    
+    return render(request, "rango/search.html", {"query": query, "result_list": result_list})
+
+
+def goto_url(request):
+    try:
+        id = None
+        if request.method == "GET":
+            id = request.GET.get("page_id")
+            page = Page.objects.get(id=id)
+            page.views += 1
+            page.save()
+            return redirect(page.url)
+        else:
+            return redirect(reverse("rango:index"))
+    except (Page.DoesNotExist, request.DoesNotExist):
+        return redirect(reverse("rango:index"))
