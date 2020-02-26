@@ -13,7 +13,11 @@
     </div>
     <div class="container">
         <div class="row">
-            <img src="{{ MEDIA_URL }}{{ user_profile.picture }}" width="300" height="300" alt="{{ selected_user.username }}'s profile image" />
+            {% if user_profile.picture %}
+                <img src="{{ MEDIA_URL }}{{ user_profile.picture }}" width="300" height="300" alt="generated profile image" />
+            {% else %}
+                <img src="https://api.adorable.io/avatars/300/rango-{{ user_profile }}" width="300" height="300" alt="{{ selected_user.username }}'s profile image" />
+            {% endif %}
             <br />
             <div>
                 {% if selected_user == user %}
