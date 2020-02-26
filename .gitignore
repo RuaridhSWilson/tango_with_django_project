@@ -6,3 +6,4 @@ db.sqlite3
 thumbs.db
 .vscode
 desktop.ini
+.idea
