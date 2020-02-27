@@ -262,3 +262,19 @@ class ListProfilesView(View):
         profiles = UserProfile.objects.all()
         
         return render(request, "rango/list_profiles.html", {"user_profile_list": profiles})
+
+
+class LikeCategoryView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        category_id = request.GET["category_id"]
+
+        try:
+            category = Category.objects.get(id=int(category_id))
+        except (Category.DoesNotExist, ValueError):
+            return HttpResponse(-1)
+
+        category.likes += 1
+        category.save()
+
+        return HttpResponse(category.likes)
