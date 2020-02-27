@@ -16,10 +16,20 @@
                 This tutorial has been put together by Ruaridh Wilson.
                 <p>Visits: {{ visits }}</p>
             </div>
-            <div>
-                <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" />
-                <img src="{{ MEDIA_URL }}cat.jpg" alt="Picture of a Cat" />
-            </div>
         </div>
+    </div>
+    <button class="btn btn-primary" onclick="alert('You clicked the button using inline JavaScript.');">
+        Click me - I run on vanilla JavaScript!
+    </button>
+    <button class="btn btn-primary" id="about-btn">
+        Click me - I'm using JQuery!
+    </button>
+    <p>
+        This is some text for the JQuery example.
+    </p>
+    <div id="msg">Hello! I'm a further example for JQuery testing.</div>
+    <div>
+        <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango" />
+        <img src="{{ MEDIA_URL }}cat.jpg" alt="Picture of a Cat" />
     </div>
 {% endblock %}
