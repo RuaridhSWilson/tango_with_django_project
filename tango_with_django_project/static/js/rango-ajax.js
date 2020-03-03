@@ -10,7 +10,7 @@ $(document).ready(function () {
                 $("#like_count").html(data);
                 $("#like_btn").hide();
             })
-    })
+    });
 
     $("#search-input").keyup(function () {
         var query;
@@ -21,6 +21,21 @@ $(document).ready(function () {
             function (data) {
                 $("#categories-listing").html(data);
             })
-    })
+    });
+
+    $(".rango-page-add").click(function () {
+        var categoryid = $(this).attr("data-categoryid");
+        var title = $(this).attr("data-title");
+        var url = $(this).attr("data-url");
+        var clickedButton = $(this);
+
+        $.get("/rango/search_add_page/",
+            {"id": categoryid, "title": title, "url": url},
+            function (data) {
+                $("#page-listing").html(data);
+                clickedButton.hide();
+            })
+
+    });
 
 });

@@ -308,3 +308,32 @@ class CategorySuggestionView(View):
             category_list = Category.objects.order_by("-likes")
 
         return render(request, "rango/categories.html", {"categories": category_list})
+
+
+class SearchAddPageView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        if "title" in request.GET and "url" in request.GET and "id" in request.GET:
+            title = request.GET["title"]
+            url = request.GET["url"]
+            category_id = request.GET["id"]
+
+            try:
+                category = Category.objects.get(id=category_id)
+            except (Category.DoesNotExist, ValueError):
+                return redirect(reverse("rango:index"))
+
+            page, new = Page.objects.get_or_create(
+                title=title, url=url, category=category
+            )
+            if new:
+                page.views = 0
+                page.save()
+
+            return render(
+                request,
+                "rango/pages.html",
+                {"pages": Page.objects.filter(category=category).order_by("-views")},
+            )
+        else:
+            return
